@@ -105,6 +105,9 @@ nmi:
     bne @interpret
 
     sta z:notedex ; reset notedex to zero
+    inc z:sectionindex
+    ldx z:sectionindex
+    jsr setsection
     jmp @findnote
 
 @interpret:
@@ -146,6 +149,7 @@ countdown: .res 1
 notelen: .res 1
 notedex: .res 1
 musicaddr: .res 2
+sectionindex: .res 1
 
     .segment "CODE"
 
@@ -162,15 +166,19 @@ playnote:
     sta $4000
     rts
 
-main:
-
-    ldx #$01
+setsection:
     lda MusicHeaderData, x
     tax
     lda MusicHeaderData+1, x
     sta musicaddr
     lda MusicHeaderData+2, x
     sta musicaddr+1
+    rts
+
+main:
+    ldx #$00
+    stx sectionindex
+    jsr setsection
 
     lda #$01
     sta z:countdown
