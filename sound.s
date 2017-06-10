@@ -100,8 +100,8 @@ nmi:
     bne @complete
 
 @findnote:
-    ldx z:notedex
-    lda GroundM_P1Data, x
+    ldy z:notedex
+    lda (musicaddr), y
     bne @interpret
 
     sta z:notedex ; reset notedex to zero
@@ -145,6 +145,7 @@ irq:
 countdown: .res 1
 notelen: .res 1
 notedex: .res 1
+musicaddr: .res 2
 
     .segment "CODE"
 
@@ -162,6 +163,12 @@ playnote:
     rts
 
 main:
+
+    lda GroundLevelPart3AHdr+1
+    sta musicaddr
+    lda GroundLevelPart3AHdr+2
+    sta musicaddr+1
+
     lda #$01
     sta z:countdown
 @loopforever:
@@ -193,6 +200,17 @@ MusicLengthLookupTbl:
 .byte $36, $03, $09, $06, $12, $1b, $24, $0c
 .byte $24, $02, $06, $04, $0c, $12, $18, $08
 .byte $12, $01, $03, $02, $06, $09, $0c, $04
+
+GroundLevelPart1Hdr:  .byte $18, <GroundM_P1Data, >GroundM_P1Data, $2d, $1c, $b8
+GroundLevelPart2AHdr: .byte $18, <GroundM_P2AData, >GroundM_P2AData, $20, $12, $70
+GroundLevelPart2BHdr: .byte $18, <GroundM_P2BData, >GroundM_P2BData, $1b, $10, $44
+GroundLevelPart2CHdr: .byte $18, <GroundM_P2CData, >GroundM_P2CData, $11, $0a, $1c
+GroundLevelPart3AHdr: .byte $18, <GroundM_P3AData, >GroundM_P3AData, $2d, $10, $58
+GroundLevelPart3BHdr: .byte $18, <GroundM_P3BData, >GroundM_P3BData, $14, $0d, $3f
+GroundLevelLeadInHdr: .byte $18, <GroundMLdInData, >GroundMLdInData, $15, $0d, $21
+GroundLevelPart4AHdr: .byte $18, <GroundM_P4AData, >GroundM_P4AData, $18, $10, $7a
+GroundLevelPart4BHdr: .byte $18, <GroundM_P4BData, >GroundM_P4BData, $19, $0f, $54
+GroundLevelPart4CHdr: .byte $18, <GroundM_P4CData, >GroundM_P4CData, $1e, $12, $2b
 
 GroundM_P1Data:
 .byte $85, $2c, $22, $1c, $84, $26, $2a, $82, $28, $26, $04
