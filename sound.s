@@ -102,6 +102,12 @@ nmi:
 @findnote:
     ldx z:notedex
     lda GroundM_P1Data, x
+    bne @interpret
+
+    sta z:notedex ; reset notedex to zero
+    jmp @findnote
+
+@interpret:
     inc z:notedex
     tax
     and #$80
@@ -192,3 +198,102 @@ GroundM_P1Data:
 .byte $85, $2c, $22, $1c, $84, $26, $2a, $82, $28, $26, $04
 .byte $87, $22, $34, $3a, $82, $40, $04, $36, $84, $3a, $34
 .byte $82, $2c, $30, $85, $2a
+
+SilenceData:
+.byte $00
+
+.byte $5d, $55, $4d, $15, $19, $96, $15, $d5, $e3, $eb
+.byte $2d, $a6, $2b, $27, $9c, $9e, $59
+
+.byte $85, $22, $1c, $14, $84, $1e, $22, $82, $20, $1e, $04, $87
+.byte $1c, $2c, $34, $82, $36, $04, $30, $34, $04, $2c, $04, $26
+.byte $2a, $85, $22
+
+GroundM_P2AData:
+.byte $84, $04, $82, $3a, $38, $36, $32, $04, $34
+.byte $04, $24, $26, $2c, $04, $26, $2c, $30, $00
+
+.byte $05, $b4, $b2, $b0, $2b, $ac, $84
+.byte $9c, $9e, $a2, $84, $94, $9c, $9e
+
+.byte $85, $14, $22, $84, $2c, $85, $1e
+.byte $82, $2c, $84, $2c, $1e
+
+GroundM_P2BData:
+.byte $84, $04, $82, $3a, $38, $36, $32, $04, $34
+.byte $04, $64, $04, $64, $86, $64, $00
+
+.byte $05, $b4, $b2, $b0, $2b, $ac, $84
+.byte $37, $b6, $b6, $45
+
+.byte $85, $14, $1c, $82, $22, $84, $2c
+.byte $4e, $82, $4e, $84, $4e, $22
+
+GroundM_P2CData:
+.byte $84, $04, $85, $32, $85, $30, $86, $2c, $04, $00
+
+.byte $05, $a4, $05, $9e, $05, $9d, $85
+
+.byte $84, $14, $85, $24, $28, $2c, $82
+.byte $22, $84, $22, $14
+
+.byte $21, $d0, $c4, $d0, $31, $d0, $c4, $d0, $00
+
+GroundM_P3AData:
+.byte $82, $2c, $84, $2c, $2c, $82, $2c, $30
+.byte $04, $34, $2c, $04, $26, $86, $22, $00
+
+.byte $a4, $25, $25, $a4, $29, $a2, $1d, $9c, $95
+
+GroundM_P3BData:
+.byte $82, $2c, $2c, $04, $2c, $04, $2c, $30, $85, $34, $04, $04, $00
+
+.byte $a4, $25, $25, $a4, $a8, $63, $04
+
+;triangle data used by both sections of third part
+.byte $85, $0e, $1a, $84, $24, $85, $22, $14, $84, $0c
+
+GroundMLdInData:
+.byte $82, $34, $84, $34, $34, $82, $2c, $84, $34, $86, $3a, $04, $00
+
+.byte $a0, $21, $21, $a0, $21, $2b, $05, $a3
+
+.byte $82, $18, $84, $18, $18, $82, $18, $18, $04, $86, $3a, $22
+
+;noise data used by lead-in and third part sections
+.byte $31, $90, $31, $90, $31, $71, $31, $90, $90, $90, $00
+
+GroundM_P4AData:
+.byte $82, $34, $84, $2c, $85, $22, $84, $24
+.byte $82, $26, $36, $04, $36, $86, $26, $00
+
+.byte $ac, $27, $5d, $1d, $9e, $2d, $ac, $9f
+
+.byte $85, $14, $82, $20, $84, $22, $2c
+.byte $1e, $1e, $82, $2c, $2c, $1e, $04
+
+GroundM_P4BData:
+.byte $87, $2a, $40, $40, $40, $3a, $36
+.byte $82, $34, $2c, $04, $26, $86, $22, $00
+
+.byte $e3, $f7, $f7, $f7, $f5, $f1, $ac, $27, $9e, $9d
+
+.byte $85, $18, $82, $1e, $84, $22, $2a
+.byte $22, $22, $82, $2c, $2c, $22, $04
+
+DeathMusData:
+.byte $86, $04 ;death music share data with fourth part c of ground level music 
+
+GroundM_P4CData:
+.byte $82, $2a, $36, $04, $36, $87, $36, $34, $30, $86, $2c, $04, $00
+
+.byte $00, $68, $6a, $6c, $45 ;death music only
+
+.byte $a2, $31, $b0, $f1, $ed, $eb, $a2, $1d, $9c, $95
+
+.byte $86, $04 ;death music only
+
+.byte $85, $22, $82, $22, $87, $22, $26, $2a, $84, $2c, $22, $86, $14
+
+;noise data used by fourth part sections
+.byte $51, $90, $31, $11, $00
