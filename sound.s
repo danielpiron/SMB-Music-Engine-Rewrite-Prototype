@@ -164,9 +164,12 @@ playnote:
 
 main:
 
-    lda GroundLevelPart3AHdr+1
+    ldx #$01
+    lda MusicHeaderData, x
+    tax
+    lda MusicHeaderData+1, x
     sta musicaddr
-    lda GroundLevelPart3AHdr+2
+    lda MusicHeaderData+2, x
     sta musicaddr+1
 
     lda #$01
@@ -200,6 +203,20 @@ MusicLengthLookupTbl:
 .byte $36, $03, $09, $06, $12, $1b, $24, $0c
 .byte $24, $02, $06, $04, $0c, $12, $18, $08
 .byte $12, $01, $03, $02, $06, $09, $0c, $04
+
+MusicHeaderData:
+MHD:
+
+.byte GroundLevelLeadInHdr-MHD  ;ground level music layout
+.byte GroundLevelPart1Hdr-MHD, GroundLevelPart1Hdr-MHD
+.byte GroundLevelPart2AHdr-MHD, GroundLevelPart2BHdr-MHD, GroundLevelPart2AHdr-MHD, GroundLevelPart2CHdr-MHD
+.byte GroundLevelPart2AHdr-MHD, GroundLevelPart2BHdr-MHD, GroundLevelPart2AHdr-MHD, GroundLevelPart2CHdr-MHD
+.byte GroundLevelPart3AHdr-MHD, GroundLevelPart3BHdr-MHD, GroundLevelPart3AHdr-MHD, GroundLevelLeadInHdr-MHD
+.byte GroundLevelPart1Hdr-MHD, GroundLevelPart1Hdr-MHD
+.byte GroundLevelPart4AHdr-MHD, GroundLevelPart4BHdr-MHD, GroundLevelPart4AHdr-MHD, GroundLevelPart4CHdr-MHD
+.byte GroundLevelPart4AHdr-MHD, GroundLevelPart4BHdr-MHD, GroundLevelPart4AHdr-MHD, GroundLevelPart4CHdr-MHD
+.byte GroundLevelPart3AHdr-MHD, GroundLevelPart3BHdr-MHD, GroundLevelPart3AHdr-MHD, GroundLevelLeadInHdr-MHD
+.byte GroundLevelPart4AHdr-MHD, GroundLevelPart4BHdr-MHD, GroundLevelPart4AHdr-MHD, GroundLevelPart4CHdr-MHD
 
 GroundLevelPart1Hdr:  .byte $18, <GroundM_P1Data, >GroundM_P1Data, $2d, $1c, $b8
 GroundLevelPart2AHdr: .byte $18, <GroundM_P2AData, >GroundM_P2AData, $20, $12, $70
