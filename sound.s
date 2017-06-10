@@ -118,6 +118,14 @@ framecount: .res 1
 main:
     lda #$00
     sta z:framecount
+    lda #$01
+    sta $4015
+    lda #$08
+    sta $4002
+    lda #$02
+    sta $4003
+    lda #$bf
+    sta $4000
 @loopforever:
     jmp @loopforever
     rts
