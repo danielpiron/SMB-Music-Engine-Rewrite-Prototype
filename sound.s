@@ -99,12 +99,19 @@ nmi:
     dec z:framecount
     bne @complete
 
-    lda z:notedex
+@findnote:
+    ldx z:notedex
+    lda GroundM_P1Data, x
+    inc z:notedex
+    tax
+    and #$80
+    bne @findnote
+
+    txa
     jsr playnote
+
     lda #60
     sta z:framecount
-    inc z:notedex
-    inc z:notedex
         
 @complete:
     pla
@@ -161,3 +168,8 @@ Freqencies: ; len = 54
 .byte $00, $47, $00, $43, $00, $3b, $00, $35
 .byte $00, $2a, $00, $23, $04, $75, $03, $57
 .byte $02, $f9, $02, $cf, $01, $fc, $00, $6a
+
+GroundM_P1Data:
+.byte $85, $2c, $22, $1c, $84, $26, $2a, $82, $28, $26, $04
+.byte $87, $22, $34, $3a, $82, $40, $04, $36, $84, $3a, $34
+.byte $82, $2c, $30, $85, $2a
