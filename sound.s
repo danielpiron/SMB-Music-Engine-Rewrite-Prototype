@@ -99,10 +99,12 @@ nmi:
     dec z:framecount
     bne @complete
 
-    ; lda notedex
+    lda z:notedex
     jsr playnote
     lda #60
     sta z:framecount
+    inc z:notedex
+    inc z:notedex
         
 @complete:
     pla
@@ -118,19 +120,18 @@ irq:
 
     .segment "ZEROPAGE"
 framecount: .res 1
+notedex: .res 1
 
     .segment "CODE"
 
 playnote:
+    tax
     lda #$01
     sta $4015
-    lda #$08
+    lda Freqencies+1,x
     sta $4002
-    lda #$16
-    asl
-    asl
-    asl
-    ora #$02
+    lda Freqencies+0,x
+    ora #$b0
     sta $4003
     lda #$ca  ; 1011|1111
     sta $4000
@@ -142,3 +143,21 @@ main:
 @loopforever:
     jmp @loopforever
     rts
+
+.RODATA
+; Frequency tables stolen from Super Mario Brothers
+;
+Freqencies: ; len = 54
+.byte $00, $88, $00, $2f, $00, $00
+.byte $02, $a6, $02, $80, $02, $5c, $02, $3a
+.byte $02, $1a, $01, $df, $01, $c4, $01, $ab
+.byte $01, $93, $01, $7c, $01, $67, $01, $53
+.byte $01, $40, $01, $2e, $01, $1d, $01, $0d
+.byte $00, $fe, $00, $ef, $00, $e2, $00, $d5
+.byte $00, $c9, $00, $be, $00, $b3, $00, $a9
+.byte $00, $a0, $00, $97, $00, $8e, $00, $86
+.byte $00, $77, $00, $7e, $00, $71, $00, $54
+.byte $00, $64, $00, $5f, $00, $59, $00, $50
+.byte $00, $47, $00, $43, $00, $3b, $00, $35
+.byte $00, $2a, $00, $23, $04, $75, $03, $57
+.byte $02, $f9, $02, $cf, $01, $fc, $00, $6a
