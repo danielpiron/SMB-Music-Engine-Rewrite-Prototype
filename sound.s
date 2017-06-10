@@ -96,7 +96,13 @@ nmi:
     tya
     pha
 
-    inc z:framecount
+    dec z:framecount
+    bne @complete
+
+    ; lda notedex
+    jsr playnote
+    lda #60
+    sta z:framecount
         
 @complete:
     pla
@@ -112,7 +118,6 @@ irq:
 
     .segment "ZEROPAGE"
 framecount: .res 1
-
 
     .segment "CODE"
 
@@ -132,8 +137,7 @@ playnote:
     rts
 
 main:
-    jsr playnote
-    lda #$00
+    lda #$01
     sta z:framecount
 @loopforever:
     jmp @loopforever
