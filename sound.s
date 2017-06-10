@@ -115,17 +115,26 @@ framecount: .res 1
 
 
     .segment "CODE"
-main:
-    lda #$00
-    sta z:framecount
+
+playnote:
     lda #$01
     sta $4015
     lda #$08
     sta $4002
-    lda #$02
+    lda #$16
+    asl
+    asl
+    asl
+    ora #$02
     sta $4003
-    lda #$bf
+    lda #$ca  ; 1011|1111
     sta $4000
+    rts
+
+main:
+    jsr playnote
+    lda #$00
+    sta z:framecount
 @loopforever:
     jmp @loopforever
     rts
