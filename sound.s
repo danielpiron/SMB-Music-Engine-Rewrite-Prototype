@@ -96,7 +96,7 @@ nmi:
     tya
     pha
 
-    dec z:framecount
+    dec z:countdown
     bne @complete
 
 @findnote:
@@ -105,13 +105,23 @@ nmi:
     inc z:notedex
     tax
     and #$80
-    bne @findnote
+    beq @notefound
+    ; Set the note length
+    txa
+    and #$07
+    clc
+    adc #$18
+    tax
+    lda MusicLengthLookupTbl, x
+    sta z:notelen
+    jmp @findnote
 
+@notefound:
     txa
     jsr playnote
 
-    lda #60
-    sta z:framecount
+    lda z:notelen
+    sta z:countdown
         
 @complete:
     pla
@@ -126,7 +136,8 @@ irq:
 
 
     .segment "ZEROPAGE"
-framecount: .res 1
+countdown: .res 1
+notelen: .res 1
 notedex: .res 1
 
     .segment "CODE"
@@ -146,7 +157,7 @@ playnote:
 
 main:
     lda #$01
-    sta z:framecount
+    sta z:countdown
 @loopforever:
     jmp @loopforever
     rts
@@ -168,6 +179,14 @@ Freqencies: ; len = 54
 .byte $00, $47, $00, $43, $00, $3b, $00, $35
 .byte $00, $2a, $00, $23, $04, $75, $03, $57
 .byte $02, $f9, $02, $cf, $01, $fc, $00, $6a
+
+MusicLengthLookupTbl:
+.byte $05, $0a, $14, $28, $50, $1e, $3c, $02
+.byte $04, $08, $10, $20, $40, $18, $30, $0c
+.byte $03, $06, $0c, $18, $30, $12, $24, $08
+.byte $36, $03, $09, $06, $12, $1b, $24, $0c
+.byte $24, $02, $06, $04, $0c, $12, $18, $08
+.byte $12, $01, $03, $02, $06, $09, $0c, $04
 
 GroundM_P1Data:
 .byte $85, $2c, $22, $1c, $84, $26, $2a, $82, $28, $26, $04
