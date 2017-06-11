@@ -89,13 +89,8 @@ reset:
 
 
     .segment "CODE"
-nmi:
-    pha
-    txa
-    pha
-    tya
-    pha
 
+playsquare2:
     dec z:countdown
     bne @complete
 
@@ -133,6 +128,17 @@ nmi:
     sta z:countdown
         
 @complete:
+    rts
+
+nmi:
+    pha
+    txa
+    pha
+    tya
+    pha
+
+    jsr playsquare2
+
     pla
     tay
     pla
