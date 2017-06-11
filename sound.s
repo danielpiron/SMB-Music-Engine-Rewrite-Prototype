@@ -160,9 +160,9 @@ playnote:
     lda Freqencies+1,x
     sta $4002
     lda Freqencies+0,x
-    ora #$b0
+    ora #$80
     sta $4003
-    lda #$ca  ; 1011|1111
+    lda #$9f
     sta $4000
     rts
 
