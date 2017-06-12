@@ -96,12 +96,11 @@ playsquare2:
 
 @findnote:
     ldy z:notedex_sq2
-    lda (musicaddr_sq2), y
+    lda (musicaddr), y
     bne @interpret
 
-    sta z:notedex_sq2 ; reset notedex to zero
-    inc z:sectionindex_sq2
-    ldx z:sectionindex_sq2
+    inc z:sectionindex
+    ldx z:sectionindex
     jsr setsection
     jmp @findnote
 
@@ -154,8 +153,8 @@ irq:
 countdown_sq2: .res 1
 notelen_sq2: .res 1
 notedex_sq2: .res 1
-musicaddr_sq2: .res 2
-sectionindex_sq2: .res 1
+musicaddr: .res 2
+sectionindex: .res 1
 
     .segment "CODE"
 
@@ -185,16 +184,18 @@ setsection:
     lda MusicHeaderData, x
     tax
     lda MusicHeaderData+1, x
-    sta musicaddr_sq2
+    sta musicaddr
     lda MusicHeaderData+2, x
-    sta musicaddr_sq2+1
+    sta musicaddr+1
+    lda #$00
+    sta z:notedex_sq2
     rts
 
 main:
     lda #$02
     sta $4015
     ldx #$00
-    stx sectionindex_sq2
+    stx sectionindex
     jsr setsection
 
     lda #$01
