@@ -102,7 +102,7 @@ playsquare2:
     sta z:notedex_sq2 ; reset notedex to zero
     inc z:sectionindex_sq2
     ldx z:sectionindex_sq2
-    jsr setsection_sq2
+    jsr setsection
     jmp @findnote
 
 @interpret:
@@ -181,7 +181,7 @@ playnote_sq2:
     sta $4004
     rts
 
-setsection_sq2:
+setsection:
     lda MusicHeaderData, x
     tax
     lda MusicHeaderData+1, x
@@ -195,7 +195,7 @@ main:
     sta $4015
     ldx #$00
     stx sectionindex_sq2
-    jsr setsection_sq2
+    jsr setsection
 
     lda #$01
     sta z:countdown_sq2
