@@ -205,6 +205,82 @@ playtriangle:
 @complete:
     rts
 
+playnoise:
+;noise format
+;d7-d6, d0 - length offset in length look-up table (bit order is d0,d7,d6)
+;d5-d4 - beat type (0 - rest, 1 - short, 2 - strong, 3 - long)
+;d3-d1 - unused
+;value of $00 in noise data is used as null terminator, affects only noise
+
+    dec z:countdown_noise
+    bne @complete
+
+@handleloop:
+    ldy z:notedex_noise
+    lda (musicaddr), y
+    bne @processbeat
+    lda z:noise_loop_offset
+    sta z:notedex_noise
+    jmp @handleloop
+
+@processbeat:
+    tay
+
+    ror
+    tya
+    rol
+    rol
+    rol
+    and #$07
+    clc
+    adc #$18
+    tax
+    lda MusicLengthLookupTbl, x
+    sta z:countdown_noise
+
+    tya
+    and #$30
+    beq @silent
+
+    cmp #$10
+    beq @short
+
+    cmp #$20
+    beq @strong
+
+    cmp #$30
+    beq @longb
+
+@short:
+    lda #$1c
+    ldx #$03
+    ldy #$18
+    bne @playbeat
+
+@strong:
+    lda #$1c
+    ldx #$03
+    ldy #$18
+    bne @playbeat
+
+@longb:
+    lda #$1c
+    ldx #$03
+    ldy #$58
+    bne @playbeat
+
+@silent:
+    lda #$10
+
+@playbeat:
+    sta $400c
+    stx $400e
+    sty $400f
+
+    inc z:notedex_noise
+
+@complete:
+    rts
 
 nmi:
     pha
@@ -216,6 +292,7 @@ nmi:
     jsr playsquare2
     jsr playsquare1
     jsr playtriangle
+    jsr playnoise
 
     pla
     tay
@@ -240,6 +317,10 @@ notedex_sq1: .res 1
 countdown_tri: .res 1
 notelen_tri: .res 1
 notedex_tri: .res 1
+
+countdown_noise: .res 1
+notedex_noise: .res 1
+noise_loop_offset: .res 1
 
 musicaddr: .res 2
 sectionindex: .res 1
@@ -296,10 +377,15 @@ setsection:
 
     lda MusicHeaderData+4, x
     sta z:notedex_sq1
+
+    lda MusicHeaderData+5, x
+    sta z:notedex_noise
+    sta z:noise_loop_offset
+
     rts
 
 main:
-    lda #$07 ; Enable squarewaves 1 and 2
+    lda #$0F ; Enable squarewaves 1 and 2, triangle, and noise
     sta $4015
 
     ldx #$00
@@ -310,6 +396,7 @@ main:
     sta z:countdown_sq2
     sta z:countdown_sq1
     sta z:countdown_tri
+    sta z:countdown_noise
 @loopforever:
     jmp @loopforever
     rts
