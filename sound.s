@@ -91,22 +91,22 @@ reset:
     .segment "CODE"
 
 playsquare2:
-    dec z:countdown
+    dec z:countdown_sq2
     bne @complete
 
 @findnote:
-    ldy z:notedex
-    lda (musicaddr), y
+    ldy z:notedex_sq2
+    lda (musicaddr_sq2), y
     bne @interpret
 
-    sta z:notedex ; reset notedex to zero
-    inc z:sectionindex
-    ldx z:sectionindex
-    jsr setsection
+    sta z:notedex_sq2 ; reset notedex to zero
+    inc z:sectionindex_sq2
+    ldx z:sectionindex_sq2
+    jsr setsection_sq2
     jmp @findnote
 
 @interpret:
-    inc z:notedex
+    inc z:notedex_sq2
     tax
     and #$80
     beq @notefound
@@ -117,15 +117,15 @@ playsquare2:
     adc #$18
     tax
     lda MusicLengthLookupTbl, x
-    sta z:notelen
+    sta z:notelen_sq2
     jmp @findnote
 
 @notefound:
     txa
     jsr playnote_sq2
 
-    lda z:notelen
-    sta z:countdown
+    lda z:notelen_sq2
+    sta z:countdown_sq2
         
 @complete:
     rts
@@ -151,11 +151,11 @@ irq:
 
 
     .segment "ZEROPAGE"
-countdown: .res 1
-notelen: .res 1
-notedex: .res 1
-musicaddr: .res 2
-sectionindex: .res 1
+countdown_sq2: .res 1
+notelen_sq2: .res 1
+notedex_sq2: .res 1
+musicaddr_sq2: .res 2
+sectionindex_sq2: .res 1
 
     .segment "CODE"
 
@@ -181,24 +181,24 @@ playnote_sq2:
     sta $4004
     rts
 
-setsection:
+setsection_sq2:
     lda MusicHeaderData, x
     tax
     lda MusicHeaderData+1, x
-    sta musicaddr
+    sta musicaddr_sq2
     lda MusicHeaderData+2, x
-    sta musicaddr+1
+    sta musicaddr_sq2+1
     rts
 
 main:
     lda #$02
     sta $4015
     ldx #$00
-    stx sectionindex
-    jsr setsection
+    stx sectionindex_sq2
+    jsr setsection_sq2
 
     lda #$01
-    sta z:countdown
+    sta z:countdown_sq2
 @loopforever:
     jmp @loopforever
     rts
