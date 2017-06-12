@@ -129,6 +129,41 @@ playsquare2:
 @complete:
     rts
 
+playsquare1:
+;square 1 format
+;d7-d6, d0 - length offset in length look-up table (bit order is d0,d7,d6)
+;d5-d1 - note offset in frequency look-up table
+;value of $00 in square 1 data is flag alternate control reg data to be loaded
+    dec z:countdown_sq1
+    bne @complete
+
+    ldy z:notedex_sq1
+    lda (musicaddr), y
+    tay
+
+    and #$3e
+    jsr playnote_sq1
+
+    ; Shift bits 7 and 6 into positions 1 and 0 respectively
+    ; The original bit 0 becomes bit 2.
+    tya
+    ror
+    tya
+    rol
+    rol
+    rol
+    and #$07
+    clc
+    adc #$18
+    tax
+
+    lda MusicLengthLookupTbl, x
+    sta z:countdown_sq1
+    inc z:notedex_sq1
+
+@complete:
+    rts
+
 nmi:
     pha
     txa
@@ -137,6 +172,7 @@ nmi:
     pha
 
     jsr playsquare2
+    jsr playsquare1
 
     pla
     tay
@@ -153,6 +189,11 @@ irq:
 countdown_sq2: .res 1
 notelen_sq2: .res 1
 notedex_sq2: .res 1
+
+countdown_sq1: .res 1
+notelen_sq1: .res 1
+notedex_sq1: .res 1
+
 musicaddr: .res 2
 sectionindex: .res 1
 
@@ -183,23 +224,31 @@ playnote_sq2:
 setsection:
     lda MusicHeaderData, x
     tax
+
     lda MusicHeaderData+1, x
     sta musicaddr
     lda MusicHeaderData+2, x
     sta musicaddr+1
+
     lda #$00
     sta z:notedex_sq2
+
+    lda MusicHeaderData+4, x
+    sta z:notedex_sq1
     rts
 
 main:
-    lda #$02
+    lda #$03 ; Enable squarewaves 1 and 2
     sta $4015
+
     ldx #$00
     stx sectionindex
     jsr setsection
 
     lda #$01
     sta z:countdown_sq2
+    lda #$01
+    sta z:countdown_sq1
 @loopforever:
     jmp @loopforever
     rts
