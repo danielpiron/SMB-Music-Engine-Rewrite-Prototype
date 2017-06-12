@@ -100,7 +100,14 @@ playsquare2:
     bne @interpret
 
     inc z:sectionindex
-    ldx z:sectionindex
+    lda z:sectionindex
+    cmp #$21 ; Handle the loop in music
+    bne @updatesection
+
+    lda #$01 ; Skip the intro
+    sta z:sectionindex
+@updatesection:
+    tax
     jsr setsection
     jmp @findnote
 
