@@ -122,7 +122,7 @@ playsquare2:
 
 @notefound:
     txa
-    jsr playnote
+    jsr playnote_sq2
 
     lda z:notelen
     sta z:countdown
@@ -159,10 +159,8 @@ sectionindex: .res 1
 
     .segment "CODE"
 
-playnote:
+playnote_sq1:
     tax
-    lda #$01
-    sta $4015
     lda Freqencies+1,x
     sta $4002
     lda Freqencies+0,x
@@ -170,6 +168,17 @@ playnote:
     sta $4003
     lda #$9f
     sta $4000
+    rts
+
+playnote_sq2:
+    tax
+    lda Freqencies+1,x
+    sta $4006
+    lda Freqencies+0,x
+    ora #$80
+    sta $4007
+    lda #$9f
+    sta $4004
     rts
 
 setsection:
@@ -182,6 +191,8 @@ setsection:
     rts
 
 main:
+    lda #$02
+    sta $4015
     ldx #$00
     stx sectionindex
     jsr setsection
