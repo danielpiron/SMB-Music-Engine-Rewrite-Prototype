@@ -125,7 +125,7 @@ playsquare2:
 
     lda z:notelen_sq2
     sta z:countdown_sq2
-        
+
 @complete:
     rts
 
@@ -164,6 +164,41 @@ playsquare1:
 @complete:
     rts
 
+
+playtriangle:
+    dec z:countdown_tri
+    bne @complete
+
+@findnote:
+    ldy z:notedex_tri
+    lda (musicaddr), y
+    beq @findnote
+
+    inc z:notedex_tri
+    tax
+    and #$80
+    beq @notefound
+    ; Set the note length
+    txa
+    and #$07
+    clc
+    adc #$18
+    tax
+    lda MusicLengthLookupTbl, x
+    sta z:notelen_tri
+    jmp @findnote
+
+@notefound:
+    txa
+    jsr playnote_tri
+
+    lda z:notelen_tri
+    sta z:countdown_tri
+
+@complete:
+    rts
+
+
 nmi:
     pha
     txa
@@ -173,6 +208,7 @@ nmi:
 
     jsr playsquare2
     jsr playsquare1
+    jsr playtriangle
 
     pla
     tay
@@ -193,6 +229,10 @@ notedex_sq2: .res 1
 countdown_sq1: .res 1
 notelen_sq1: .res 1
 notedex_sq1: .res 1
+
+countdown_tri: .res 1
+notelen_tri: .res 1
+notedex_tri: .res 1
 
 musicaddr: .res 2
 sectionindex: .res 1
@@ -221,6 +261,17 @@ playnote_sq2:
     sta $4004
     rts
 
+playnote_tri:
+    tax
+    lda Freqencies+1,x
+    sta $400A
+    lda Freqencies+0,x
+    ora #$80
+    sta $400B
+    lda #$1f
+    sta $4008
+    rts
+
 setsection:
     lda MusicHeaderData, x
     tax
@@ -233,12 +284,15 @@ setsection:
     lda #$00
     sta z:notedex_sq2
 
+    lda MusicHeaderData+3, x
+    sta z:notedex_tri
+
     lda MusicHeaderData+4, x
     sta z:notedex_sq1
     rts
 
 main:
-    lda #$03 ; Enable squarewaves 1 and 2
+    lda #$07 ; Enable squarewaves 1 and 2
     sta $4015
 
     ldx #$00
@@ -247,8 +301,8 @@ main:
 
     lda #$01
     sta z:countdown_sq2
-    lda #$01
     sta z:countdown_sq1
+    sta z:countdown_tri
 @loopforever:
     jmp @loopforever
     rts
